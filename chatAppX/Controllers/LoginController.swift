@@ -43,10 +43,9 @@ class LoginController: UIViewController {
             print("Form not valid")
             return
         }
-        Auth.auth().signIn(withEmail: email, password: password)
         Auth.auth().signIn(withEmail: email, password: password) { authDataResult, error in
             if error != nil {
-                print(error)
+                print(error!.localizedDescription)
                 return
             }
             
@@ -57,8 +56,7 @@ class LoginController: UIViewController {
     @objc func handleRegister() {
         guard let name = nameTextField.text,
               let email = emailTextField.text,
-              let password = passwordTextField.text,
-              let uid = Auth.auth().currentUser?.uid
+              let password = passwordTextField.text
         else {
             print("Form is not valid")
             return
@@ -70,6 +68,9 @@ class LoginController: UIViewController {
                 return
             }
             
+            guard let uid = Auth.auth().currentUser?.uid else {
+                return
+            }
             // Successfully authenticated user
             let ref = Database.database().reference()
             let userRef = ref.child("users").child(uid)
@@ -86,6 +87,8 @@ class LoginController: UIViewController {
     
     let nameTextField: UITextField = {
         let tf = UITextField()
+        tf.autocapitalizationType = .none
+        tf.autocorrectionType = .no
         tf.placeholder = "Name"
         tf.translatesAutoresizingMaskIntoConstraints = false
         return tf
@@ -100,6 +103,8 @@ class LoginController: UIViewController {
     
     let emailTextField: UITextField = {
         let tf = UITextField()
+        tf.autocapitalizationType = .none
+        tf.autocorrectionType = .no
         tf.placeholder = "Email"
         tf.translatesAutoresizingMaskIntoConstraints = false
         return tf
@@ -124,8 +129,15 @@ class LoginController: UIViewController {
         let imageView = UIImageView()
         imageView.backgroundColor = .black
         imageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleSelectProfileImageView)))
+        
         return imageView
     }()
+    
+    @objc func handleSelectProfileImageView() {
+        
+    }
     
     lazy var loginRegisterSegmentedControl: UISegmentedControl = {
         let sc = UISegmentedControl(items: ["Login", "Register"])
