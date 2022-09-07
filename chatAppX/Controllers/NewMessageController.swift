@@ -26,6 +26,7 @@ class NewMessageController: UITableViewController {
                 let user = User()
                 user.name = dictionary["name"] as? String
                 user.email = dictionary["email"] as? String
+                user.profileImageUrl = dictionary["profileImageUrl"] as? String
                 self.users.append(user)
                 self.tableView.reloadData()
             }

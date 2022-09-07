@@ -53,38 +53,6 @@ class LoginController: UIViewController {
         }
     }
     
-    @objc func handleRegister() {
-        guard let name = nameTextField.text,
-              let email = emailTextField.text,
-              let password = passwordTextField.text
-        else {
-            print("Form is not valid")
-            return
-        }
-        
-        Auth.auth().createUser(withEmail: email, password: password) { authResult, error in
-            if error != nil {
-                print(error!.localizedDescription)
-                return
-            }
-            
-            guard let uid = Auth.auth().currentUser?.uid else {
-                return
-            }
-            // Successfully authenticated user
-            let ref = Database.database().reference()
-            let userRef = ref.child("users").child(uid)
-            userRef.updateChildValues(["name": name, "email": email]) { error, ref in
-                if error != nil {
-                    print(error!.localizedDescription)
-                    return
-                }
-                self.dismiss(animated: true)
-            }
-            
-        }
-    }
-    
     let nameTextField: UITextField = {
         let tf = UITextField()
         tf.autocapitalizationType = .none
@@ -125,19 +93,18 @@ class LoginController: UIViewController {
         return tf
     }()
     
-    let profileImageView: UIImageView = {
+    lazy var profileImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.backgroundColor = .black
         imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.contentMode = .scaleAspectFit
         
         imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleSelectProfileImageView)))
-        
+        imageView.isUserInteractionEnabled = true
         return imageView
     }()
     
-    @objc func handleSelectProfileImageView() {
-        
-    }
+
     
     lazy var loginRegisterSegmentedControl: UISegmentedControl = {
         let sc = UISegmentedControl(items: ["Login", "Register"])
